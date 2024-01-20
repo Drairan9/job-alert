@@ -1,11 +1,9 @@
 {
   "name": "job-alert",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "devWatch": "npx swc ./src -d ./dist -w",
-    "build": "npx swc ./src -d ./dist"
+    "build": "npx swc ./src -d ./dist",
+    "run": "node --env-file=.env ./dist/index.js"
   },
   "keywords": [],
   "author": "",

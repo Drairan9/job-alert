@@ -12,6 +12,7 @@ export default class DiscordBot extends Client {
 				GatewayIntentBits.GuildMessageReactions,
 				GatewayIntentBits.GuildMembers,
 				GatewayIntentBits.MessageContent,
+				GatewayIntentBits.DirectMessages
 			]
 		});
 		this.BOT_TOKEN = token;
