@@ -4,7 +4,7 @@ import TJob from '../types/Jobs';
 import TempService from './TempService';
 
 export default class JustJoinItService {
-	private static readonly PAGE_URL = 'https://justjoin.it/katowice/javascript';
+	private static readonly PAGE_URL = 'https://justjoin.it/all-locations/javascript/experience-level_junior/remote_yes?orderBy=DESC&sortBy=newest';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const web = await axios.get(this.PAGE_URL, {
@@ -30,8 +30,9 @@ export default class JustJoinItService {
 
 	static async getNewJobs(): Promise<TJob[] | false> {
 		const temp = new TempService('justjoinit');
+		const jobsfromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(temp.readTempMem()).map((jobOffer: TJob) => jobOffer['url']));
+		const oldJobOffers = new Set(JSON.parse(jobsfromTemp).map((jobOffer: TJob) => jobOffer['url']));
 		const latestJobOffers: TJob[] | false = await JustJoinItService.getAllJobs();
 		if (!latestJobOffers) return false;
 

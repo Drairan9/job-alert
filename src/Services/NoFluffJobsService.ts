@@ -17,7 +17,7 @@ export default class NoFluffJobsService {
 		}
 		const $ = load(web.data);
 
-		return $('[nfj-postings-item]').map((_, item) => {
+		const x = $('.list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
 			return {
 				website: 'NoFluffJobs',
 				title: $(item).find('[data-cy="title position on the job offer listing"]').text().trim(),
@@ -27,12 +27,15 @@ export default class NoFluffJobsService {
 				tags: $(item).find('[data-cy="category name on the job offer listing"]').map((_, element) => $(element).text().trim()).toArray(),
 			};
 		}).toArray();
+
+		console.log(x);
 	}
 
 	static async getNewJobs(): Promise<TJob[] | false> {
 		const temp = new TempService('nofluffjobs');
+		const jobsfromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(temp.readTempMem()).map((jobOffer: TJob) => jobOffer['url']));
+		const oldJobOffers = new Set(JSON.parse(jobsfromTemp).map((jobOffer: TJob) => jobOffer['url']));
 		const latestJobOffers: TJob[] | false = await NoFluffJobsService.getAllJobs();
 		if (!latestJobOffers) return false;
 

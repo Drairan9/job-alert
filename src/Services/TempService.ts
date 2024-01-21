@@ -1,4 +1,5 @@
-import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 
 export default class TempService {
 	private readonly filename;
@@ -24,9 +25,9 @@ export default class TempService {
 		}
 	}
 
-	public readTempMem() {
+	public async readTempMem() {
 		const pathTempFile = `${__dirname}/../tmp/${this.filename}.tmp`;
-		return readFileSync(pathTempFile, {encoding: 'utf-8'});
+		return await readFile(pathTempFile, {encoding: 'utf-8'});
 	}
 
 	public writeTempMem(data: string) {
