@@ -21,7 +21,7 @@ export default class PracujPlService {
 				website: 'PracujPl',
 				title: this.extractJobTitle($, item),
 				salary: this.extractJobSalary($, item),
-				company: $(item).find('[data-test="text-company-name"]').text().trim(),
+				company: $(item).find('.hide-on-desktop.tiles_cegq0mb').find('[data-test="text-company-name"]').text().trim(),//$(item).find('[data-test="link-company-profile"] > [data-test="text-company-name"]').text().trim(),
 				url: this.extractJobUrl($, item),
 				tags: $(item).find('[data-test="technologies-item"]').map((_, element) => $(element).text()).toArray(),
 			};
@@ -63,6 +63,7 @@ export default class PracujPlService {
 		if (!latestJobOffers) return false;
 
 		temp.writeTempMem(JSON.stringify(latestJobOffers));
+		console.log(latestJobOffers.filter(job => !oldJobOffers.has(job['url'])));
 		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
 	}
 }

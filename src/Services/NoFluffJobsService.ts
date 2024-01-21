@@ -17,7 +17,7 @@ export default class NoFluffJobsService {
 		}
 		const $ = load(web.data);
 
-		return $('.list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
+		return $('[listname="search"] > .list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
 			return {
 				website: 'NoFluffJobs',
 				title: $(item).find('[data-cy="title position on the job offer listing"]').text().trim(),
