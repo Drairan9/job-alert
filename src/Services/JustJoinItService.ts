@@ -18,7 +18,9 @@ export default class JustJoinItService {
 
 		return $('[data-test-id="virtuoso-item-list"] > div').map((_, item) => {
 			return {
+				id: `https://justjoin.it/${$(item).find('.css-4lqp8g').attr('href')}`,
 				website: 'JustJoinIt',
+				thumbnail: $(item).find('.css-1j42lph > img').attr('src') ?? '',
 				title: $(item).find('.css-16gpjqw').text().trim(),
 				salary: $(item).find('.css-1b2ga3v').text().trim().replace(/\.css-jmy9db\{[^}]*\}/, ''),
 				company: $(item).find('.css-ldh1c9 > span').text().trim(),
