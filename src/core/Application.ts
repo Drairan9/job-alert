@@ -1,13 +1,15 @@
 import DiscordBot from './discord/DiscordBot';
 import { Events } from 'discord.js';
 import NoFluffJobsService from '../Services/NoFluffJobsService';
+import JustJoinItService from '../Services/JustJoinItService';
 
 export default class Application {
 	private readonly discordBot: DiscordBot;
 
 	constructor() {
 		// this.discordBot = new DiscordBot(process.env.TOKEN!);
-		new NoFluffJobsService().getAllJobs();
+
+		JustJoinItService.getAllJobs();
 		// this.discordBot.once(Events.ClientReady, async (client) => {
 		// 	console.log(`Connected ${client.user.displayName}`);
 		//
