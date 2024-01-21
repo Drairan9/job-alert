@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import TJob from '../types/Jobs';
+import TempService from './TempService';
 
 export default class JustJoinItService {
 	private static readonly PAGE_URL = 'https://justjoin.it/katowice/javascript';
@@ -27,7 +28,14 @@ export default class JustJoinItService {
 		}).toArray();
 	}
 
-	static async getNewJobs() {
+	static async getNewJobs(): Promise<TJob[] | false> {
+		const temp = new TempService('justjoinit');
 
+		const oldJobOffers = new Set(JSON.parse(temp.readTempMem()).map((jobOffer: TJob) => jobOffer['url']));
+		const latestJobOffers: TJob[] | false = await JustJoinItService.getAllJobs();
+		if (!latestJobOffers) return false;
+
+		temp.writeTempMem(JSON.stringify(latestJobOffers));
+		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
 	}
 }

@@ -20,7 +20,7 @@ export default class TempService {
 	private initializeTempMem() {
 		const pathTempFile = `${__dirname}/../tmp/${this.filename}.tmp`;
 		if (!existsSync(pathTempFile)) {
-			writeFileSync(pathTempFile, '', {flag: 'w'});
+			writeFileSync(pathTempFile, '[{}]', {flag: 'w'});
 		}
 	}
 

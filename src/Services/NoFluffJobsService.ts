@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import TJob from '../types/Jobs';
+import TempService from './TempService';
 
 export default class NoFluffJobsService {
 	private static readonly PAGE_URL = 'https://nofluffjobs.com/remote/JavaScript?page=1&criteria=seniority%3Dtrainee,junior&sort=newest';
@@ -26,5 +27,16 @@ export default class NoFluffJobsService {
 				tags: $(item).find('[data-cy="category name on the job offer listing"]').map((_, element) => $(element).text().trim()).toArray(),
 			};
 		}).toArray();
+	}
+
+	static async getNewJobs(): Promise<TJob[] | false> {
+		const temp = new TempService('nofluffjobs');
+
+		const oldJobOffers = new Set(JSON.parse(temp.readTempMem()).map((jobOffer: TJob) => jobOffer['url']));
+		const latestJobOffers: TJob[] | false = await NoFluffJobsService.getAllJobs();
+		if (!latestJobOffers) return false;
+
+		temp.writeTempMem(JSON.stringify(latestJobOffers));
+		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
 	}
 }

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { CheerioAPI, Element, load } from 'cheerio';
 import TJob from '../types/Jobs';
+import TempService from './TempService';
 
 export default class PracujPlService {
 	private static readonly PAGE_URL = 'https://it.pracuj.pl/praca/praca%20zdalna;wm,home-office?et=1%2C17&sc=0&itth=33';
@@ -51,5 +52,16 @@ export default class PracujPlService {
 			return companyUrl ? companyUrl : 'NO URL';
 		}
 		return url;
+	}
+
+	static async getNewJobs(): Promise<TJob[] | false> {
+		const temp = new TempService('pracujpl');
+
+		const oldJobOffers = new Set(JSON.parse(temp.readTempMem()).map((jobOffer: TJob) => jobOffer['url']));
+		const latestJobOffers: TJob[] | false = await PracujPlService.getAllJobs();
+		if (!latestJobOffers) return false;
+
+		temp.writeTempMem(JSON.stringify(latestJobOffers));
+		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
 	}
 }
