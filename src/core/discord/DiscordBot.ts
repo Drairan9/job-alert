@@ -16,10 +16,11 @@ export default class DiscordBot extends Client {
 			]
 		});
 		this.BOT_TOKEN = token;
+		
 		this.start();
 	}
 
 	private async start() {
-		await this.login(this.BOT_TOKEN);
+		return await this.login(this.BOT_TOKEN);
 	}
 }
