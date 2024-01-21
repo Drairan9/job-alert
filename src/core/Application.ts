@@ -10,7 +10,7 @@ export default class Application {
 	constructor() {
 		// this.discordBot = new DiscordBot(process.env.TOKEN!);
 
-		PracujPlService.getAllJobs();
+		JustJoinItService.getAllJobs();
 		// this.discordBot.once(Events.ClientReady, async (client) => {
 		// 	console.log(`Connected ${client.user.displayName}`);
 		//

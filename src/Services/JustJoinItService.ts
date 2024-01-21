@@ -26,4 +26,8 @@ export default class JustJoinItService {
 			};
 		}).toArray();
 	}
+
+	static async getNewJobs() {
+
+	}
 }
