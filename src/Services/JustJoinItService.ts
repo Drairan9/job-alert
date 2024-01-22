@@ -20,7 +20,7 @@ export default class JustJoinItService {
 			return {
 				id: `https://justjoin.it/${$(item).find('.css-4lqp8g').attr('href')}`,
 				website: 'JustJoinIt',
-				thumbnail: $(item).find('.css-1hudrbb > img').attr('src') ?? '',
+				thumbnail: $(item).find('.css-1hudrbb > img').attr('src') ?? 'https://fotc.com/app/uploads/2023/04/Group-230-35.png',
 				title: $(item).find('.css-16gpjqw').text().trim(),
 				salary: $(item).find('.css-1b2ga3v').text().trim().replace(/\.css-jmy9db\{[^}]*\}/, ''),
 				company: $(item).find('.css-ldh1c9 > span').text().trim(),

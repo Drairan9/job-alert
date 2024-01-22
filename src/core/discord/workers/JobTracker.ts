@@ -15,25 +15,24 @@ export default class JobTracker {
 			const user = await this.client.users.fetch(process.env.OWNER_ID!);
 			const newJobs = await callback();
 			if (newJobs) {
-				//console.log(newJobs);
 				if (newJobs.length <= 0) return;
-				await user.send(':rotating_light: New job alert!');
+				await user.send('New job alert!');
 				newJobs.forEach((job) => {
-					//console.log(job);
-					// const embed = new EmbedBuilder()
-					// 	.setColor(0xef0808)
-					// 	.setTitle(job.title)
-					// 	.setURL(job.url)
-					// 	.setAuthor({name: job.company})
-					// 	.setFooter({text: job.website})
-					// 	.addFields({
-					// 		name: 'Salary',
-					// 		value: job.salary
-					// 	}, {
-					// 		name: 'Tags',
-					// 		value: job.tags.join(', ')
-					// 	});
-					// user.send({embeds: [embed]});
+					const embed = new EmbedBuilder()
+						.setColor(0x68c70f)
+						.setTitle(job.title)
+						.setURL(job.url)
+						.setAuthor({name: job.company})
+						.setThumbnail(job.thumbnail)
+						.setFooter({text: job.website})
+						.addFields({
+							name: 'Salary',
+							value: job.salary
+						}, {
+							name: 'Tags',
+							value: job.tags.join(', ')
+						});
+					user.send({embeds: [embed]});
 				});
 			}
 			if (!newJobs) await user.send('Cannot fetch new jobs.');
