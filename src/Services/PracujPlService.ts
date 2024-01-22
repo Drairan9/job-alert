@@ -18,7 +18,9 @@ export default class PracujPlService {
 
 		return $('[data-test="default-offer"]').map((_, item) => {
 			return {
+				id: $(item).attr('data-test-offerid') ?? this.extractJobUrl($, item),
 				website: 'PracujPl',
+				thumbnail: $(item).find('[data-test="link-company-profile"] > picture > img').attr('src') ?? 'https://i.gpcdn.pl/2.0.0.216/images/logo-share-pracuj.jpg',
 				title: this.extractJobTitle($, item),
 				salary: this.extractJobSalary($, item),
 				company: $(item).find('.hide-on-desktop.tiles_cegq0mb').find('[data-test="text-company-name"]').text().trim(),//$(item).find('[data-test="link-company-profile"] > [data-test="text-company-name"]').text().trim(),

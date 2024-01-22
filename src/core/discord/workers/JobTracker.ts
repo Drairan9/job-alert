@@ -15,11 +15,11 @@ export default class JobTracker {
 			const user = await this.client.users.fetch(process.env.OWNER_ID!);
 			const newJobs = await callback();
 			if (newJobs) {
-				console.log(newJobs.length);
+				//console.log(newJobs);
 				if (newJobs.length <= 0) return;
 				await user.send(':rotating_light: New job alert!');
 				newJobs.forEach((job) => {
-					console.log(job);
+					//console.log(job);
 					// const embed = new EmbedBuilder()
 					// 	.setColor(0xef0808)
 					// 	.setTitle(job.title)
