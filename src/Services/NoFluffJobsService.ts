@@ -33,9 +33,9 @@ export default class NoFluffJobsService {
 
 	static async getNewJobs(): Promise<TJob[] | false> {
 		const temp = new TempService('nofluffjobs');
-		const jobsfromTemp = await temp.readTempMem();
+		const jobsFromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(jobsfromTemp).map((jobOffer: TJob) => jobOffer['url']));
+		const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
 		const latestJobOffers: TJob[] | false = await NoFluffJobsService.getAllJobs();
 		if (!latestJobOffers) return false;
 

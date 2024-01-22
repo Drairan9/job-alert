@@ -3,7 +3,7 @@ import TJob from '../../../types/Jobs';
 
 export default class JobTracker {
 	private readonly client: Client;
-	private readonly INTERVAL: number = 60000 * 0.1;
+	private readonly INTERVAL: number = 60000 * 30; // Mins
 
 	constructor(client: Client, callback: () => Promise<TJob[] | false>) {
 		this.client = client;
