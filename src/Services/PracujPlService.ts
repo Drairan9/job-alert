@@ -20,8 +20,8 @@ export default class PracujPlService {
 			return {
 				id: $(item).attr('data-test-offerid') ?? this.extractJobUrl($, item),
 				website: 'PracujPl',
-				thumbnail: $(item).find('[data-test="link-company-profile"] > picture > img').attr('src') ?? 'https://i.gpcdn.pl/2.0.0.216/images/logo-share-pracuj.jpg',
-				title: this.extractJobTitle($, item),
+				thumbnail: $(item).find('[data-test="link-company-profile"] > picture > img').attr('src') || 'https://i.gpcdn.pl/2.0.0.216/images/logo-share-pracuj.jpg',
+				title: this.extractJobTitle($, item) || 'No title',
 				salary: this.extractJobSalary($, item),
 				company: $(item).find('.hide-on-desktop.tiles_cegq0mb').find('[data-test="text-company-name"]').text().trim(),
 				url: this.extractJobUrl($, item),

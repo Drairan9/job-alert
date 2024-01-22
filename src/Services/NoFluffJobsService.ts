@@ -22,7 +22,7 @@ export default class NoFluffJobsService {
 				id: $(item).attr('id') ?? `https://nofluffjobs.com${$(item).attr('href')}`,
 				website: 'NoFluffJobs',
 				thumbnail: 'https://nofluffjobs.com/heroes/wp-content/themes/nofluffjobs-heroes/assets/images/logo_white.svg', // NoFluff makes separate request to grab the images and some tags
-				title: $(item).find('[data-cy="title position on the job offer listing"]').text().trim(),
+				title: $(item).find('[data-cy="title position on the job offer listing"]').text().trim() || 'No title',
 				salary: $(item).find('[data-cy="salary ranges on the job offer listing"]').text().trim().replace('\n', ''),
 				company: $(item).find('footer > h4').text().trim(),
 				url: `https://nofluffjobs.com${$(item).attr('href')}`,
