@@ -30,11 +30,9 @@ export default class NoFluffJobsService {
 			};
 		}).toArray();
 
-		jobs.filter(job =>
+		return jobs.filter(job =>
 			job.company !== 'Look4IT' // Hehe
 		);
-
-		return jobs;
 	}
 
 	static async getNewJobs(): Promise<TJob[] | false> {

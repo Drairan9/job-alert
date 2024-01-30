@@ -38,7 +38,13 @@ export default class JobTracker {
 				}
 				if (!newJobs) await user.send('Cannot fetch new jobs.');
 			} catch (e) {
-				user.send(`JobTracker exception: ${e}`);
+				if (e instanceof Array) {
+					e.forEach((error, index) => {
+						user.send(`JobTracker multi exception ${index}: ${error.message}`);
+					});
+				} else {
+					user.send(`JobTracker exception: ${e}`);
+				}
 			}
 		}, this.INTERVAL);
 	}
