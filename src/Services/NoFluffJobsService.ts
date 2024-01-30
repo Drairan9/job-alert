@@ -17,7 +17,7 @@ export default class NoFluffJobsService {
 		}
 		const $ = load(web.data);
 
-		return $('[listname="search"] > .list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
+		const jobs = $('[listname="search"] > .list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
 			return {
 				id: $(item).attr('id') ?? `https://nofluffjobs.com${$(item).attr('href')}`,
 				website: 'NoFluffJobs',
@@ -29,6 +29,12 @@ export default class NoFluffJobsService {
 				tags: $(item).find('[data-cy="category name on the job offer listing"]').map((_, element) => $(element).text().trim()).toArray(),
 			};
 		}).toArray();
+
+		jobs.filter(job =>
+			job.company !== 'Look4IT' // Hehe
+		);
+
+		return jobs;
 	}
 
 	static async getNewJobs(): Promise<TJob[] | false> {
