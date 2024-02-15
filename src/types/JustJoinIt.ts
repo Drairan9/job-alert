@@ -1,0 +1,17 @@
+export type TEmploymentType = {
+	currency: string,
+	from: number,
+	from_chf: number,
+	from_eur: number,
+	from_gbp: number,
+	from_pln: string,
+	from_usd: number,
+	gross: boolean,
+	to: number,
+	to_chf: number,
+	to_eur: number,
+	to_gbp: number,
+	to_pln: string,
+	to_usd: number,
+	type: string,
+}

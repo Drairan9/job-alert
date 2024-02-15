@@ -1,33 +1,36 @@
 import axios from 'axios';
-import { load } from 'cheerio';
 import TJob from '../types/Jobs';
 import TempService from './TempService';
+import { TEmploymentType } from '../types/JustJoinIt';
 
 export default class JustJoinItService {
-	private static readonly PAGE_URL = 'https://justjoin.it/all-locations/javascript/experience-level_junior/remote_yes?orderBy=DESC&sortBy=newest';
+	private static readonly PAGE_URL = 'https://api.justjoin.it/v2/user-panel/offers?categories[]=1&experienceLevels[]=junior&remote=true&page=1&sortBy=newest&orderBy=DESC&perPage=100&salaryCurrencies=PLN';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
-		const web = await axios.get(this.PAGE_URL, {
+		const res = await axios.get(this.PAGE_URL, {
 			headers: {
-				'sec-ch-ua-platform': '"Windows"',
+				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+				'sec-ch-ua-platform': 'Windows',
+				'sec-ch-ua-mobile': '?0',
+				'Accept': 'application/json, text/plain, */*',
+				'Referer': 'https://justjoin.it/',
+				'Version': '2'
 			}
 		});
-		if (web.status !== 200) return false;
+		if (res.status !== 200) return false;
 
-		const $ = load(web.data);
-
-		return $('[data-test-id="virtuoso-item-list"] > div').map((_, item) => {
+		return res.data.data.map((job: any) => {
 			return {
-				id: `https://justjoin.it/${$(item).find('.css-4lqp8g').attr('href')}`,
+				id: job.slug,
 				website: 'JustJoinIt',
-				thumbnail: $(item).find('.css-1hudrbb > img').attr('src') ?? 'https://fotc.com/app/uploads/2023/04/Group-230-35.png',
-				title: $(item).find('.css-16gpjqw').text().trim() || 'No title',
-				salary: $(item).find('.css-1b2ga3v').text().trim().replace(/\.css-jmy9db\{[^}]*\}/, ''),
-				company: $(item).find('.css-ldh1c9 > span').text().trim(),
-				url: `https://justjoin.it/${$(item).find('.css-4lqp8g').attr('href')}`,
-				tags: $(item).find('.css-1am4i4o').map((_, element) => $(element).text()).toArray(),
+				thumbnail: job.companyLogoThumbUrl,
+				title: job.title,
+				salary: this.minifyEmploymentTypes(job.employmentTypes),
+				company: job.companyName,
+				url: `https://justjoin.it/offers/${job.slug}`,
+				tags: job.requiredSkills,
 			};
-		}).toArray();
+		});
 	}
 
 	static async getNewJobs(): Promise<TJob[] | false> {
@@ -40,5 +43,15 @@ export default class JustJoinItService {
 
 		temp.writeTempMem(JSON.stringify(latestJobOffers));
 		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
+	}
+
+	/**
+	 * Convert array of employment types to readable string.
+	 **/
+	private static minifyEmploymentTypes(employmentTypes: TEmploymentType[]): string {
+		const minifiedEmpTypes = employmentTypes.map((employmentType) => {
+			return `${employmentType.from} - ${employmentType.to} ${employmentType.currency} | ${employmentType.type}`;
+		});
+		return minifiedEmpTypes.join(', ');
 	}
 }
