@@ -1,10 +1,11 @@
 import axios from 'axios';
-import TJob from '../types/Jobs';
+import { TJob, TGetNewJobs } from '../types/Jobs';
 import TempService from './TempService';
 import { TEmploymentType } from '../types/JustJoinIt';
 
 export default class JustJoinItService {
 	private static readonly PAGE_URL = 'https://api.justjoin.it/v2/user-panel/offers?categories[]=1&experienceLevels[]=junior&remote=true&page=1&sortBy=newest&orderBy=DESC&perPage=100&salaryCurrencies=PLN';
+	private static readonly PROVIDER_NAME = 'JustJoinIt';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const res = await axios.get(this.PAGE_URL, {
@@ -33,16 +34,30 @@ export default class JustJoinItService {
 		});
 	}
 
-	static async getNewJobs(): Promise<TJob[] | false> {
-		const temp = new TempService('justjoinit');
-		const jobsFromTemp = await temp.readTempMem();
+	static async getNewJobs(): Promise<TGetNewJobs> {
+		try {
+			const temp = new TempService('justjoinit');
+			const jobsFromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
-		const latestJobOffers: TJob[] | false = await JustJoinItService.getAllJobs();
-		if (!latestJobOffers) return false;
+			const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
+			const latestJobOffers: TJob[] | false = await JustJoinItService.getAllJobs();
+			if (!latestJobOffers) throw new Error('getAllJobs() failed response status code check.');
 
-		temp.writeTempMem(JSON.stringify(latestJobOffers));
-		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
+			temp.writeTempMem(JSON.stringify(latestJobOffers));
+			return {
+				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
+				isError: false,
+				errorText: '',
+				provider: this.PROVIDER_NAME
+			};
+		} catch (e) {
+			return {
+				jobs: null,
+				isError: true,
+				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
+				provider: this.PROVIDER_NAME
+			};
+		}
 	}
 
 	/**

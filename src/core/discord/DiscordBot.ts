@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import JobTracker from './workers/JobTracker';
-import TJob from '../../types/Jobs';
+import { TGetNewJobs } from '../../types/Jobs';
 
 export default class DiscordBot extends Client {
 	private readonly BOT_TOKEN;
@@ -22,7 +22,7 @@ export default class DiscordBot extends Client {
 		this.start();
 	}
 
-	public trackJob(callback: () => Promise<TJob[] | false>) {
+	public trackJob(callback: () => Promise<TGetNewJobs>) {
 		new JobTracker(this, callback);
 	}
 

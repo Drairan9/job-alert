@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { load } from 'cheerio';
-import TJob from '../types/Jobs';
+import { TGetNewJobs, TJob } from '../types/Jobs';
 import TempService from './TempService';
 
 export default class NoFluffJobsService {
 	private static readonly PAGE_URL = 'https://nofluffjobs.com/remote/JavaScript?page=1&criteria=seniority%3Dtrainee,junior&sort=newest';
+	private static readonly PROVIDER_NAME = 'NoFluffJobs';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const web = await axios.get(this.PAGE_URL, {
@@ -17,7 +18,7 @@ export default class NoFluffJobsService {
 		}
 		const $ = load(web.data);
 
-		const jobs = $('[listname="search"] > .list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
+		return $('[listname="search"] > .list-container.ng-star-inserted > [nfj-postings-item]').map((_, item) => {
 			return {
 				id: $(item).attr('id') ?? `https://nofluffjobs.com${$(item).attr('href')}`,
 				website: 'NoFluffJobs',
@@ -29,21 +30,31 @@ export default class NoFluffJobsService {
 				tags: $(item).find('[data-cy="category name on the job offer listing"]').map((_, element) => $(element).text().trim()).toArray(),
 			};
 		}).toArray();
-
-		return jobs.filter(job =>
-			job.company !== 'Look4IT' // Hehe
-		);
 	}
 
-	static async getNewJobs(): Promise<TJob[] | false> {
-		const temp = new TempService('nofluffjobs');
-		const jobsFromTemp = await temp.readTempMem();
+	static async getNewJobs(): Promise<TGetNewJobs> {
+		try {
+			const temp = new TempService('nofluffjobs');
+			const jobsFromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
-		const latestJobOffers: TJob[] | false = await NoFluffJobsService.getAllJobs();
-		if (!latestJobOffers) return false;
+			const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
+			const latestJobOffers: TJob[] | false = await NoFluffJobsService.getAllJobs();
+			if (!latestJobOffers) throw new Error('getAllJobs() failed response status code check.');
+			temp.writeTempMem(JSON.stringify(latestJobOffers));
 
-		temp.writeTempMem(JSON.stringify(latestJobOffers));
-		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
+			return {
+				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
+				isError: false,
+				errorText: '',
+				provider: this.PROVIDER_NAME
+			};
+		} catch (e) {
+			return {
+				jobs: null,
+				isError: true,
+				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
+				provider: this.PROVIDER_NAME
+			};
+		}
 	}
 }

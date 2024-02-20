@@ -1,4 +1,4 @@
-type TJob = {
+export type TJob = {
 	id: string, // Don't care what is it. It just needs to be unique.
 	website: string,
 	thumbnail: string,
@@ -8,4 +8,10 @@ type TJob = {
 	url: string,
 	tags: string[],
 };
-export default TJob;
+
+export type TGetNewJobs = {
+	jobs: TJob[] | null,
+	isError: boolean,
+	errorText: string,
+	provider: string
+}

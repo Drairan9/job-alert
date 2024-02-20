@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { CheerioAPI, Element, load } from 'cheerio';
-import TJob from '../types/Jobs';
+import { TGetNewJobs, TJob } from '../types/Jobs';
 import TempService from './TempService';
 
 export default class PracujPlService {
 	private static readonly PAGE_URL = 'https://it.pracuj.pl/praca/praca%20zdalna;wm,home-office?et=1%2C17&sc=0&itth=33';
+	private static readonly PROVIDER_NAME = 'PracujPL';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const web = await axios.get(this.PAGE_URL, {
@@ -56,15 +57,29 @@ export default class PracujPlService {
 		return url;
 	}
 
-	static async getNewJobs(): Promise<TJob[] | false> {
-		const temp = new TempService('pracujpl');
-		const jobsFromTemp = await temp.readTempMem();
+	static async getNewJobs(): Promise<TGetNewJobs> {
+		try {
+			const temp = new TempService('pracujpl');
+			const jobsFromTemp = await temp.readTempMem();
 
-		const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
-		const latestJobOffers: TJob[] | false = await PracujPlService.getAllJobs();
-		if (!latestJobOffers) return false;
+			const oldJobOffers = new Set(JSON.parse(jobsFromTemp).map((jobOffer: TJob) => jobOffer['url']));
+			const latestJobOffers: TJob[] | false = await PracujPlService.getAllJobs();
+			if (!latestJobOffers) throw new Error('getAllJobs() failed response status code check.');
+			temp.writeTempMem(JSON.stringify(latestJobOffers));
 
-		temp.writeTempMem(JSON.stringify(latestJobOffers));
-		return latestJobOffers.filter(job => !oldJobOffers.has(job['url']));
+			return {
+				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
+				isError: false,
+				errorText: '',
+				provider: this.PROVIDER_NAME
+			};
+		} catch (e) {
+			return {
+				jobs: null,
+				isError: true,
+				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
+				provider: this.PROVIDER_NAME
+			};
+		}
 	}
 }
