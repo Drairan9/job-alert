@@ -5,7 +5,6 @@ import TempService from './TempService';
 
 export default class NoFluffJobsService {
 	private static readonly PAGE_URL = 'https://nofluffjobs.com/remote/JavaScript?page=1&criteria=seniority%3Dtrainee,junior&sort=newest';
-	private static readonly PROVIDER_NAME = 'NoFluffJobs';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const web = await axios.get(this.PAGE_URL, {
@@ -46,14 +45,14 @@ export default class NoFluffJobsService {
 				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
 				isError: false,
 				errorText: '',
-				provider: this.PROVIDER_NAME
+				provider: 'NoFluffJobs'
 			};
 		} catch (e) {
 			return {
 				jobs: null,
 				isError: true,
-				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
-				provider: this.PROVIDER_NAME
+				errorText: `NoFluffJobs Service: ${e}`,
+				provider: 'NoFluffJobs'
 			};
 		}
 	}

@@ -5,7 +5,6 @@ import TempService from './TempService';
 
 export default class PracujPlService {
 	private static readonly PAGE_URL = 'https://it.pracuj.pl/praca/praca%20zdalna;wm,home-office?et=1%2C17&sc=0&itth=33';
-	private static readonly PROVIDER_NAME = 'PracujPL';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const web = await axios.get(this.PAGE_URL, {
@@ -71,14 +70,14 @@ export default class PracujPlService {
 				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
 				isError: false,
 				errorText: '',
-				provider: this.PROVIDER_NAME
+				provider: 'PracujPL'
 			};
 		} catch (e) {
 			return {
 				jobs: null,
 				isError: true,
-				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
-				provider: this.PROVIDER_NAME
+				errorText: `PracujPL Service: ${e}`,
+				provider: 'PracujPL'
 			};
 		}
 	}

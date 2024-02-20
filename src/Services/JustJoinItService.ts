@@ -5,7 +5,6 @@ import { TEmploymentType } from '../types/JustJoinIt';
 
 export default class JustJoinItService {
 	private static readonly PAGE_URL = 'https://api.justjoin.it/v2/user-panel/offers?categories[]=1&experienceLevels[]=junior&remote=true&page=1&sortBy=newest&orderBy=DESC&perPage=100&salaryCurrencies=PLN';
-	private static readonly PROVIDER_NAME = 'JustJoinIt';
 
 	static async getAllJobs(): Promise<TJob[] | false> {
 		const res = await axios.get(this.PAGE_URL, {
@@ -48,14 +47,14 @@ export default class JustJoinItService {
 				jobs: latestJobOffers.filter(job => !oldJobOffers.has(job['url'])),
 				isError: false,
 				errorText: '',
-				provider: this.PROVIDER_NAME
+				provider: 'JustJoinIt'
 			};
 		} catch (e) {
 			return {
 				jobs: null,
 				isError: true,
-				errorText: `${this.PROVIDER_NAME} Service: ${e}`,
-				provider: this.PROVIDER_NAME
+				errorText: `JustJoinIt Service: ${e}`,
+				provider: 'JustJoinIt'
 			};
 		}
 	}
