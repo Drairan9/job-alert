@@ -18,11 +18,12 @@ export default class JobTracker {
 				if (newJobs.isError) {
 					return await user.send(`JobTracker ${newJobs.provider} exception: ${newJobs.errorText}`);
 				}
-				if (newJobs.jobs === null || newJobs.jobs.length <= 0) {
-					return await user.send(`JobTracker ${newJobs.provider} exception: Jobs array is null or empty.`);
+				if (newJobs.jobs === null) {
+					return await user.send(`JobTracker ${newJobs.provider} exception: Jobs array is null.`);
 				}
-				await user.send('New job alert!');
+				if (newJobs.jobs.length <= 0) return;
 
+				await user.send('New job alert!');
 				newJobs.jobs.forEach((job: TJob) => {
 					const embed = new EmbedBuilder()
 						.setColor(0x68c70f)
