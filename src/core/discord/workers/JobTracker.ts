@@ -29,23 +29,25 @@ export default class JobTracker {
 						.setColor(0x68c70f)
 						.setTitle(job.title)
 						.setURL(job.url)
-						.setAuthor({name: job.company})
+						.setAuthor({ name: job.company })
 						.setThumbnail(job.thumbnail)
-						.setFooter({text: job.website})
-						.addFields({
-							name: 'Salary',
-							value: job.salary
-						}, {
-							name: 'Tags',
-							value: job.tags.join(', ')
-						});
-					user.send({embeds: [embed]});
+						.setFooter({ text: job.website })
+						.addFields(
+							{
+								name: 'Salary',
+								value: job.salary,
+							},
+							{
+								name: 'Tags',
+								value: job.tags.join(', '),
+							}
+						);
+					user.send({ embeds: [embed] });
 				});
 			} catch (e) {
 				const user = await this.client.users.fetch(process.env.OWNER_ID!);
 				user.send(`${e}`);
 			}
-
 		}, this.INTERVAL);
 	}
 }
